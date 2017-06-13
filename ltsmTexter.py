@@ -1,3 +1,4 @@
+# Load Larger LSTM network and generate text
 import sys
 import numpy
 from keras.models import Sequential
@@ -20,7 +21,7 @@ n_vocab = len(chars)
 print "Total Characters: ", n_chars
 print "Total Vocab: ", n_vocab
 # prepare the dataset of input to output pairs encoded as integers
-seq_length = 50 
+seq_length = 100
 dataX = []
 dataY = []
 for i in range(0, n_chars - seq_length, 1):
@@ -38,11 +39,13 @@ X = X / float(n_vocab)
 y = np_utils.to_categorical(dataY)
 # define the LSTM model
 model = Sequential()
-model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2])))
+model.add(LSTM(256, input_shape=(X.shape[1], X.shape[2]), return_sequences=True))
+model.add(Dropout(0.2))
+model.add(LSTM(256))
 model.add(Dropout(0.2))
 model.add(Dense(y.shape[1], activation='softmax'))
 # load the network weights
-filename = "weights-improvement-19-1.9435.hdf5"
+filename = "weights-improvement-49-0.9222-bigger.hdf5"
 model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 # pick a random seed
